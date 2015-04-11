@@ -1,0 +1,12 @@
+<h1>Welcome to the Bet Center</h1>
+
+<p>In order to play Blackjack, you need to put a bet down</p>
+
+<%if session[:game_state]=='pre'%><p style='color:green; font-size:150%;'>For your convenience, here is $100 to play with</p><%end%>
+
+<h3>How much would you like to bet?</h3>
+
+<form action='/bet' method="post">
+  <input type='number' min='0' name="bet_amount">
+  <input type='submit' value='Place Bet!' class='btn btn-primary'>
+</form>

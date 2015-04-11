@@ -1,0 +1,37 @@
+<div class='well'>
+
+<h4>Your Cards Are<p style="float:right;"><%=calculate_total(session[:players_cards])%></p></h4>
+<% session[:players_cards].each do |card| %>
+  <%=image_url(card)%>
+<% end %>
+
+<% if @show_hit_or_stay_buttons && session[:turn] == 'players'%>
+<form action="/player/hit" method="post">
+  <input type="submit" value="Hit" class='but btn btn-warning' style='float:left;'>
+</form>
+
+<form action="/player/stay" method="post">
+  <input type="submit" value="Stay" class='btn btn-success'>
+</form>
+
+<%end%>
+
+</div>
+
+<div class='well' style='padding-top:3px;'>
+
+<h4>Dealers Cards Are<p style="float:right;"><%if session[:turn] == 'dealers' %><%=calculate_total(session[:dealers_cards])%><%end%></p></h4>
+<% session[:dealers_cards].each_with_index do |card,i| %>
+  <%if i==1 && session[:turn] == 'players'%>
+  "<img src='/images/cards/cover.jpg'>"
+  <%else%>
+    <%=image_url(card)%>
+  <%end%>
+<% end %>
+<%if session[:dealer] == "hit" %>
+<form action="/dealer/hit" method="post">
+  <input type="submit" value="Dealer Will Hit, Click to See Dealers Card" class='btn btn-primary'>
+</form>
+<%end%>
+
+</div>

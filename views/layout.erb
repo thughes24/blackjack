@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/application.css">
+  </head>
+  <body style="padding-top: 50px;">
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+            <ul class="nav">
+              <li <%if session[:page_id] == 'home'%> class='current'<%end%>><a href="/">Home</a></li>
+              <li <%if session[:page_id] == 'enter details'%> class='current'<%end%>><a href="/enter_details">Enter Details</a></li>
+              <li <%if session[:page_id] == 'bet'%> class='current'<%end%>><a href="/bet">Bet</a></li>
+              <li <%if session[:page_id] == 'play'%> class='current'<%end%>><a href="/play">Play</a></li>
+            </ul>
+            <ul class="span3 offset1" style='width:300px;'>
+              <%if session[:total_coin]%> <li class='btn btn-warning'> Money: <%=session[:total_coin]%></li> <%end%>
+              <%if session[:current_bet]%> <li class='btn btn-success'> Current Bet: <%=session[:current_bet]%></li> <%end%>
+            </ul>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+    <%if @error %>
+      <div class="alert alert-error"><%=@error%></div>
+    <% end %>
+    <%if @success %>
+      <div class="alert alert-success"><%=@success%></div>
+    <% end %>
+      <%= yield %>
+  </div>
+  </body>
+</html>
