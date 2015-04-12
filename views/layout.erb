@@ -16,7 +16,8 @@
               <li <%if session[:page_id] == 'bet'%> class='current'<%end%>><a href="/bet">Bet</a></li>
               <li <%if session[:page_id] == 'play'%> class='current'<%end%>><a href="/play">Play</a></li>
             </ul>
-            <ul class="span3 offset1" style='width:300px;'>
+            <ul class="span5 offset1" style='width:450px;'>
+              <%if session[:name]%> <li class ='btn btn-primary'>Player: <%=session[:name]%></li><%end%>
               <%if session[:total_coin]%> <li class='btn btn-warning'> Money: <%=session[:total_coin]%></li> <%end%>
               <%if session[:current_bet]%> <li class='btn btn-success'> Current Bet: <%=session[:current_bet]%></li> <%end%>
             </ul>

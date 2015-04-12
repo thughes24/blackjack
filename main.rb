@@ -27,6 +27,7 @@ end
 
 get '/bet' do
   redirect '/game_over' if session[:total_coin] == 0
+  session[:bet_state] = nil
   if session[:game_state] != 'mid'
     session[:total_coin] = 100
     session[:page_id] = 'bet'
@@ -56,6 +57,8 @@ end
 #-----------------------GAMEPLAY-CODE-----------------------------------#
 before do
 @show_hit_or_stay_buttons = true
+session[:bet_state] = nil
+winners if session[:game_state] == 'mid'
 end
 
 #---------------------Helpers------------------------------#
@@ -97,30 +100,27 @@ helpers do
     "<img src='/images/cards/#{suit}_#{face}.jpg'>"
   end
 
-  def winners
+  def winners   
     players = calculate_total(session[:players_cards])
     dealers = calculate_total(session[:dealers_cards])
     if session[:turn] == 'players'
-      if players > 21
-        "Dealer"
-        session[:bet_state] = 'lose'
-      elsif players == 21
+      if players == 21
         "Player"
         session[:bet_state] = 'win'
-      elsif dealers == 21
+      elsif players > 21
         "Dealer"
         session[:bet_state] = 'lose'
       end
     elsif session[:turn] == 'dealers'
-      if dealers > 21
+      if dealers == 21
+        "Dealer"
+        session[:bet_state] = 'lose'
+      elsif dealers > 21
         "Player"
         session[:bet_state] = 'win'
       elsif dealers > players
         "Dealer"
         session[:bet_state] = 'lose'
-      elsif players > dealers
-        "Player"
-        session[:bet_state] = 'win'
       elsif players == dealers
         "Tie"
         session[:bet_state] = 'tie'
@@ -133,7 +133,8 @@ end
 
 post '/player/hit' do
   session[:players_cards] << session[:deck].pop
-  if winners != nil
+  winners
+  if session[:bet_state]
     redirect '/result'
   else
     erb :game
@@ -142,12 +143,13 @@ end
 
 post '/player/stay' do
   session[:turn] = 'dealers'
+  session[:dealer] = nil
   redirect '/dealer/logic'
 end
 
 post '/dealer/hit' do
   session[:dealers_cards] << session[:deck].pop
-  if winners != nil
+  if session[:bet_state]
     redirect '/result'
   else
     redirect '/dealer/logic'
@@ -157,20 +159,23 @@ end
 #---------------------------Gets----------------------------#
 
 get '/dealer' do
+  redirect '/result' if session[:bet_state]
   erb :game
 end
 
 get '/dealer/logic' do
   if calculate_total(session[:dealers_cards]) < calculate_total(session[:players_cards]) && calculate_total(session[:dealers_cards]) <= 17
     session[:dealer] = 'hit'
-  else
-    session[:dealer] = 'stay'
+    redirect '/dealer'
+  elsif session[:bet_state] 
     redirect '/result'
   end
-  redirect '/dealer'
+  session[:dealer] = 'stay'
+  redirect '/result'
 end
 
 get '/play' do
+  session[:bet_state] = nil
   session[:game_state] = 'mid'
   session[:page_id] = 'play'
   session[:deck] = create_deck
@@ -180,7 +185,9 @@ get '/play' do
   session[:players_cards] << session[:deck].pop
   session[:players_cards] << session[:deck].pop
   session[:dealers_cards] << session[:deck].pop
-  if winners != nil
+  session[:game_state] = 'mid'
+  winners
+  if session[:bet_state]
     redirect '/result'
   end
   session[:dealers_cards] << session[:deck].pop
@@ -201,6 +208,10 @@ get "/result" do
     session[:total_coin] += session[:current_bet]
     session[:current_bet] = 0
     @error = "It's a Tie <a href='/bet'>Play Again?</a>"
+  else
+    session[:total_coin] += (2*session[:current_bet])
+    session[:current_bet] = 0
+    @success = "Player Wins! <a href='/bet'>Play Again?</a>"
   end
   erb :game
 end
