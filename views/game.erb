@@ -1,3 +1,4 @@
+<div id="game">
 <div class='well'>
 
 <h4>Your Cards Are<p style="float:right;"><%=calculate_total(session[:players_cards])%></p></h4>
@@ -7,10 +8,10 @@
 
 <% if @show_hit_or_stay_buttons && session[:turn] == 'players'%>
 <form action="/player/hit" method="post">
-  <input type="submit" value="Hit" class='but btn btn-warning' style='float:left;'>
+  <input id="playershit" type="submit" value="Hit" class='but btn btn-warning' style='float:left;'>
 </form>
 
-<form action="/player/stay" method="post">
+<form action="/player/stay" method="post" id="playersstay">
   <input type="submit" value="Stay" class='btn btn-success'>
 </form>
 
@@ -29,9 +30,10 @@
   <%end%>
 <% end %>
 <%if session[:dealer] == "hit" %>
-<form action="/dealer/hit" method="post">
+<form action="/dealer/hit" method="post" id="dealershit">
   <input type="submit" value="Dealer Will Hit, Click to See Dealers Card" class='btn btn-primary'>
 </form>
 <%end%>
 
+</div>
 </div>

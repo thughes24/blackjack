@@ -137,7 +137,7 @@ post '/player/hit' do
   if session[:bet_state]
     redirect '/result'
   else
-    erb :game
+    erb :game, layout: false
   end
 end
 
